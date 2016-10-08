@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--布局的要点：1.必须包含ObservableScrollView和一个header；2.每个View的tag
+一定是你定义的@string/tag_...对应的字符串，比如ObservableScrollView对应@string/tag_collapsingScroll，
+因为我是靠tag来查找视图的；3.如果需要状态栏沉浸，状态来布局必须在最顶层
+-->
+<com.ykbjson.app.collapsingview.widget.CollapsingLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:needTranslucentStatus="true"
+    app:statusBarColor="@color/lightgray">
+
+    <com.ykbjson.app.collapsingview.widget.ObservableScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:tag="@string/tag_collapsingScroll">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--缩放视图-->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_160"
+                android:layout_gravity="center"
+                android:clipChildren="false"
+                android:tag="@string/tag_collapsingScale">
+
+                <ImageView
+                    android:id="@+id/iv_product_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bus_route_collapsing_bg" />
+            </FrameLayout>
+
+            <com.drivingassisstantHouse.library.widget.linear.LinearListView
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+        </LinearLayout>
+
+    </com.ykbjson.app.collapsingview.widget.ObservableScrollView>
+
+    <include layout="@layout/include_common_header"/>
+
+</com.ykbjson.app.collapsingview.widget.CollapsingLayout>

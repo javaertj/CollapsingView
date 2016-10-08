@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.ykbjson.app.collapsingview.widget.CollapsingLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:needTranslucentStatus="false"
+    app:statusBarAlpha="1"
+    app:statusBarColor="@color/sip_red">
+
+    <!--加这个tag是为了让主布局知道他是内容真正的容器，并且有了needTranslucentStatus="false"，
+      所以是不需要透明状态栏的，那就给他一个toppadding，让内容显示在标题栏之下-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:tag="@string/tag_collapsingContent">
+
+        <com.ykbjson.app.collapsingview.widget.ObservableScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:tag="@string/tag_collapsingScroll">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!--缩放视图-->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_160"
+                    android:layout_gravity="center"
+                    android:clipChildren="false"
+                    android:tag="@string/tag_collapsingScale">
+
+                    <ImageView
+                        android:id="@+id/iv_product_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/bus_route_collapsing_bg" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <com.drivingassisstantHouse.library.widget.linear.LinearListView
+                    android:layout_marginTop="@dimen/dimen_50"
+                    android:id="@+id/listView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                    <TextView
+                        android:textColor="@color/white"
+                        android:gravity="center"
+                        android:background="@color/sip_red"
+                        android:text="你看我还能悬浮哦"
+                        android:tag="@string/tag_collapsingFloat"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dimen_50" />
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+        </com.ykbjson.app.collapsingview.widget.ObservableScrollView>
+
+    </LinearLayout>
+
+    <include layout="@layout/include_common_header" />
+
+</com.ykbjson.app.collapsingview.widget.CollapsingLayout>

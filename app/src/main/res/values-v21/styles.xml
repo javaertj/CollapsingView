@@ -1,0 +1,17 @@
+<resources>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="android:screenOrientation">portrait</item>
+        <item name="colorPrimary">@color/sip_gray_dark</item>
+        <item name="colorPrimaryDark">@color/sip_gray_dark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:navigationBarColor">@color/sip_gray_dark</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.Transparent" parent="AppTheme.NoActionBar">
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+</resources>

@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">CollapsingView</string>
+    <string name="tag_collapsingRoot">collapsingRoot</string>
+    <string name="tag_collapsingScroll">collapsingScroll</string>
+    <string name="tag_collapsingList">collapsingList</string>
+    <string name="tag_collapsingScale">collapsingScale</string>
+    <string name="tag_collapsingHeader">collapsingHeader</string>
+    <string name="tag_collapsingContent">collapsingContent</string>
+    <string name="tag_collapsingFloat">collapsingFloat</string>
+</resources>
