@@ -312,9 +312,10 @@ public class CollapsingLayout extends FrameLayout implements OnScrollListener, O
                     case MotionEvent.ACTION_UP:
                         if (mScaling) {
                             //手指离开后恢复图片
-                            resetScaleFlag();
                             restScaleView();
                         }
+                        //防止上次沒缩放时记录了位置，导致下次点击时距离计算错误
+                        resetScaleFlag();
                         break;
                     case MotionEvent.ACTION_MOVE:
                         final int scrollY = getScrollY(scrollView);
