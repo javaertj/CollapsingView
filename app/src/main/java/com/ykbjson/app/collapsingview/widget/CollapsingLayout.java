@@ -137,16 +137,19 @@ public class CollapsingLayout extends FrameLayout implements OnScrollListener, O
             isHandled = true;
             //此处可以取到缩放视图的宽高，不在此处去替换原布局子view，解决header的布局不能正常显示的问题
             View scaleView = findViewWithTag(TAG_SCALE);
-            if (null == scaleView) {
-                return;
+            if (null != scaleView) {
+                scaleWidth = scaleView.getMeasuredWidth();
+                scaleHeight = scaleView.getMeasuredHeight();
             }
-            scaleWidth = scaleView.getMeasuredWidth();
-            scaleHeight = scaleView.getMeasuredHeight();
+            floatView = findViewWithTag(TAG_FLOAT);
+            if (null != floatView) {
+                floatViewTop = getChildTop(floatView, floatView.getTop()) - headerLayout.getMeasuredHeight();
+            }
         }
     }
 
     @Override
-    protected void onFinishInflate() {
+   protected void onFinishInflate() {
         super.onFinishInflate();
         //可以解决进入页面时布局错乱的问题
         handleLayout(getContext());
@@ -331,7 +334,7 @@ public class CollapsingLayout extends FrameLayout implements OnScrollListener, O
                         int distance = (int) ((event.getY() - lastMoveY) * 0.6); // 滚动距离乘以一个系数
                         //滚动距离负数，不缩放
                         if (distance <= 0) {
-                           resetScaleFlag();
+                            resetScaleFlag();
                             break;
                         }
                         if (scrollY == 0) {
@@ -348,7 +351,7 @@ public class CollapsingLayout extends FrameLayout implements OnScrollListener, O
     /**
      * 重置缩放相关标志位参数，解决多次上下滑动时缩放距离不准确的问题
      */
-    private void resetScaleFlag(){
+    private void resetScaleFlag() {
         mScaling = false;
         lastMoveY = 0;
     }
@@ -429,13 +432,7 @@ public class CollapsingLayout extends FrameLayout implements OnScrollListener, O
             collapsingCallback.onCollapsing(scrollY, coefficient);
         }
         //悬浮视图
-        if (null == floatView) {
-            floatView = findViewWithTag(TAG_FLOAT);
-        }
         if (null != floatView) {
-            if (floatViewTop == 0) {
-                floatViewTop = getChildTop(floatView, floatView.getTop()) - headerLayout.getMeasuredHeight();
-            }
             if (floatViewTop <= scrollY) {
                 ViewHelper.setTranslationY(floatView, -floatViewTop + scrollY);
             } else {
