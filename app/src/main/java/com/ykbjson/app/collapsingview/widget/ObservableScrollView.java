@@ -44,6 +44,16 @@ public class ObservableScrollView extends ScrollView {
     public ObservableScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setOverScrollMode(OVER_SCROLL_NEVER);
+        requestDisallowInterceptTouchEvent(true);
+    }
+
+    //解决子view没超出屏幕时不能缩放的问题
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if(ev.getAction()==MotionEvent.ACTION_MOVE) {
+            return onTouchEvent(ev);
+        }
+        return super.onInterceptTouchEvent(ev);
     }
 
     @Override

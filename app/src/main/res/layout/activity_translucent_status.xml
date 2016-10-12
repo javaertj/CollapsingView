@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--布局的要点：1.必须包含ObservableScrollView和一个header；2.每个View的tag
 一定是你定义的@string/tag_...对应的字符串，比如ObservableScrollView对应@string/tag_collapsingScroll，
-因为我是靠tag来查找视图的；3.如果需要状态栏沉浸，状态来布局必须在最顶层
+因为我是靠tag来查找视图的；3.标题栏布局必须在最顶层
 -->
 <com.ykbjson.app.collapsingview.widget.CollapsingLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"

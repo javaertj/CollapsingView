@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,7 +31,7 @@ import com.ykbjson.app.collapsingview.utils.Util;
  * 日期：2016/10/8
  */
 
-public class CollapsingLayout extends FrameLayout implements OnScrollListener, ObservableScrollView.Callbacks {
+public class CollapsingLayout extends FrameLayout implements  ObservableScrollView.Callbacks {
     /**
      * 渐变系数回调接口
      */
@@ -47,7 +46,6 @@ public class CollapsingLayout extends FrameLayout implements OnScrollListener, O
     }
 
     private final String TAG_SCROLL = getResources().getString(R.string.tag_collapsingScroll);
-    private final String TAG_LIST = getResources().getString(R.string.tag_collapsingList);
     private final String TAG_SCALE = getResources().getString(R.string.tag_collapsingScale);
     private final String TAG_HEADER = getResources().getString(R.string.tag_collapsingHeader);
     private final String TAG_CONTENT = getResources().getString(R.string.tag_collapsingContent);
@@ -166,18 +164,6 @@ public class CollapsingLayout extends FrameLayout implements OnScrollListener, O
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        final float scrollY = getViewScrollY(view);
-        final float coefficient = Math.min(scrollY * 1.0f / collapsingHeight, 1);
-        handleScroll(scrollY, coefficient);
-    }
-
-    @Override
     public void onScrollCallback(int l, int t, int oldl, int oldt) {
         final float coefficient = Math.min(t * 1.0f / collapsingHeight, 1);
         handleScroll(t, coefficient);
@@ -192,7 +178,6 @@ public class CollapsingLayout extends FrameLayout implements OnScrollListener, O
     public void onUpOrCancelMotionEvent() {
 
     }
-
 
     /**
      * 重置放大的视图
@@ -271,14 +256,9 @@ public class CollapsingLayout extends FrameLayout implements OnScrollListener, O
         setCollapsingHeight(headerLayout.getMeasuredHeight() << 1);
 
         View scrollView = findViewWithTag(TAG_SCROLL);
-        View absListView = findViewWithTag(TAG_LIST);
-
         if (null != scrollView) {
             ((ObservableScrollView) scrollView).addScrollCallbacks(this);
             handleScale(scrollView);
-        } else if (null != absListView) {
-            ((AbsListView) absListView).setOnScrollListener(this);
-            handleScale(absListView);
         }
 
         //contentview padding 兼容不需要沉浸的页面
