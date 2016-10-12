@@ -44,16 +44,19 @@ public class ObservableScrollView extends ScrollView {
     public ObservableScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setOverScrollMode(OVER_SCROLL_NEVER);
-        requestDisallowInterceptTouchEvent(true);
     }
 
-    //解决子view没超出屏幕时不能缩放的问题
+    /**
+     * 重写此方法让scrollview一直拦截touch事件，解决当scrollview内容没超出屏幕时也能拦截touch事件
+     * 因为源码 onInterceptTouchEvent 里有如下说明
+     * Don't try to intercept touch if we can't scroll anyway.
+     * if (getScrollY() == 0 && !canScrollVertically(1)) {
+     * return false;
+     * }
+     */
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if(ev.getAction()==MotionEvent.ACTION_MOVE) {
-            return onTouchEvent(ev);
-        }
-        return super.onInterceptTouchEvent(ev);
+    public boolean canScrollVertically(int direction) {
+        return true;
     }
 
     @Override

@@ -31,16 +31,16 @@ import com.ykbjson.app.collapsingview.utils.Util;
  * 日期：2016/10/8
  */
 
-public class CollapsingLayout extends FrameLayout implements  ObservableScrollView.Callbacks {
+public class CollapsingLayout extends FrameLayout implements AbsListView.OnScrollListener, ObservableScrollView.Callbacks {
     /**
-     * 渐变系数回调接口
+     * 收缩系数回调接口
      */
     public interface OnCollapsingCallback {
         /**
-         * 渐变系数变化
+         * 收缩系数变化
          *
          * @param t           竖直方向的滚动距离
-         * @param coefficient 计算出的渐变系数[0,1]
+         * @param coefficient 计算出的收缩系数[0,1]
          */
         void onCollapsing(float t, float coefficient);
     }
@@ -99,13 +99,14 @@ public class CollapsingLayout extends FrameLayout implements  ObservableScrollVi
      * 缩放视图初始高度
      */
     private int scaleHeight;
-
+    /**
+     * 是否在执行动画
+     */
+    private boolean isAnimation;
 
     private int statusBarColorRes;
     private float statusBarAlpha;
     private boolean needTranslucentStatus;
-
-    private boolean isAnimation;
 
     public CollapsingLayout(Context context) {
         this(context, null);
@@ -125,7 +126,6 @@ public class CollapsingLayout extends FrameLayout implements  ObservableScrollVi
         needTranslucentStatus = typedArray.getBoolean(
                 R.styleable.CollapsingLayout_needTranslucentStatus, true);
         typedArray.recycle();
-        setOverScrollMode(OVER_SCROLL_NEVER);
     }
 
     @Override
@@ -139,6 +139,7 @@ public class CollapsingLayout extends FrameLayout implements  ObservableScrollVi
                 scaleWidth = scaleView.getMeasuredWidth();
                 scaleHeight = scaleView.getMeasuredHeight();
             }
+            //悬浮视图
             floatView = findViewWithTag(TAG_FLOAT);
             if (null != floatView) {
                 floatViewTop = getChildTop(floatView, floatView.getTop()) - headerLayout.getMeasuredHeight();
@@ -147,7 +148,7 @@ public class CollapsingLayout extends FrameLayout implements  ObservableScrollVi
     }
 
     @Override
-   protected void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         //可以解决进入页面时布局错乱的问题
         handleLayout(getContext());
@@ -161,6 +162,18 @@ public class CollapsingLayout extends FrameLayout implements  ObservableScrollVi
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        final float scrollY = getViewScrollY(view);
+        final float coefficient = Math.min(scrollY * 1.0f / collapsingHeight, 1);
+        handleScroll(scrollY, coefficient);
     }
 
     @Override
@@ -186,6 +199,7 @@ public class CollapsingLayout extends FrameLayout implements  ObservableScrollVi
         final ViewGroup.LayoutParams lp = scaleView.getLayoutParams();
         final float w = scaleView.getLayoutParams().width;// 图片当前宽度
         final float h = scaleView.getLayoutParams().height;// 图片当前高度
+
         // 设置动画
         ValueAnimator anim = ObjectAnimator.ofFloat(0.0F, 1.0F).setDuration(200);
         anim.addListener(new Animator.AnimatorListener() {
@@ -257,7 +271,13 @@ public class CollapsingLayout extends FrameLayout implements  ObservableScrollVi
 
         View scrollView = findViewWithTag(TAG_SCROLL);
         if (null != scrollView) {
-            ((ObservableScrollView) scrollView).addScrollCallbacks(this);
+            if (scrollView instanceof ObservableScrollView) {
+                ((ObservableScrollView) scrollView).addScrollCallbacks(this);
+            } else if (scrollView instanceof AbsListView) {
+                ((AbsListView) scrollView).setOnScrollListener(this);
+            } else {
+                throw new IllegalArgumentException("only support AbsListView or ScrollView");
+            }
             handleScale(scrollView);
         }
 
@@ -292,10 +312,10 @@ public class CollapsingLayout extends FrameLayout implements  ObservableScrollVi
                     case MotionEvent.ACTION_UP:
                         if (mScaling) {
                             //手指离开后恢复图片
-                            restScaleView();
+                            CollapsingLayout.this.restScaleView();
                         }
                         //防止上次沒缩放时记录了位置，导致下次点击时距离计算错误
-                        resetScaleFlag();
+                        CollapsingLayout.this.resetScaleFlag();
                         break;
                     case MotionEvent.ACTION_MOVE:
                         final int scrollY = getScrollY(scrollView);
@@ -306,23 +326,24 @@ public class CollapsingLayout extends FrameLayout implements  ObservableScrollVi
                             }
                         }
                         // 当前位置比记录位置要小，正常返回
-                        if (event.getY() - lastMoveY <= 0) {
-                            resetScaleFlag();
+                        if (event.getY() - lastMoveY < 0) {
                             //防止快速回退时没能减掉最后一部分位移距离
-                            checkScaleViewAttr();
+                            CollapsingLayout.this.resetScaleFlag();
+                            CollapsingLayout.this.checkScaleViewAttr();
                             break;
                         }
                         int distance = (int) ((event.getY() - lastMoveY) * 0.6); // 滚动距离乘以一个系数
                         //滚动距离负数，不缩放
-                        if (distance <= 0) {
-                            resetScaleFlag();
+                        if (distance < 0) {
+                            CollapsingLayout.this.resetScaleFlag();
                             break;
                         }
+                        //这里是防止还没滚动到顶部时touch事件被拦截，导致缩放距离计算不准确的问题
                         if (scrollY == 0) {
                             // 处理放大
-                            handleScale(distance);
+                            CollapsingLayout.this.handleScale(distance);
                             return true;
-                        }// 返回true表示已经完成触摸事件，不再传递给子视图处理
+                        }
                 }
                 return false;
             }
@@ -431,7 +452,6 @@ public class CollapsingLayout extends FrameLayout implements  ObservableScrollVi
      */
     private int getChildTop(View view, int height) {
         ViewParent parent = view.getParent();
-        //没测试过相等的情况，可以改为tag相等比较
         if (null == parent || this == parent) {
             return height;
         }
