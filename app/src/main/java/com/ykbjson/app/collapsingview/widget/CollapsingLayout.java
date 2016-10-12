@@ -107,6 +107,7 @@ public class CollapsingLayout extends FrameLayout implements AbsListView.OnScrol
     private int statusBarColorRes;
     private float statusBarAlpha;
     private boolean needTranslucentStatus;
+    private boolean needPullRefresh;
 
     public CollapsingLayout(Context context) {
         this(context, null);
@@ -125,6 +126,8 @@ public class CollapsingLayout extends FrameLayout implements AbsListView.OnScrol
         statusBarAlpha = typedArray.getFloat(R.styleable.CollapsingLayout_statusBarAlpha, 0.0f);
         needTranslucentStatus = typedArray.getBoolean(
                 R.styleable.CollapsingLayout_needTranslucentStatus, true);
+        needPullRefresh = typedArray.getBoolean(
+                R.styleable.CollapsingLayout_needPullRefresh, false);
         typedArray.recycle();
     }
 
@@ -152,6 +155,13 @@ public class CollapsingLayout extends FrameLayout implements AbsListView.OnScrol
         super.onFinishInflate();
         //可以解决进入页面时布局错乱的问题
         handleLayout(getContext());
+        //当scrollview外部包含下拉刷新这类的视图和不需要透明状态栏以及内容要显示在标题之下时，不能拦截touch事件
+        if (needPullRefresh) {
+            ObservableScrollView observableScrollView = findObservableScrollView(this);
+            if (null != observableScrollView) {
+                observableScrollView.setInterceptTouchAnyWay(false);
+            }
+        }
     }
 
     @Override
@@ -289,6 +299,27 @@ public class CollapsingLayout extends FrameLayout implements AbsListView.OnScrol
             }
             content.setPadding(0, headerLayout.getMeasuredHeight(), 0, 0);
         }
+    }
+
+    /**
+     * 找出ObservableScrollView
+     *
+     * @param viewGroup
+     */
+    public ObservableScrollView findObservableScrollView(ViewGroup viewGroup) {
+        int count = viewGroup.getChildCount();
+        for (int i = 0; i < count; i++) {
+            View view = viewGroup.getChildAt(i);
+            if (view instanceof ViewGroup) {
+                if (view instanceof ObservableScrollView) {
+                    return (ObservableScrollView) view;
+                } else {
+                    findObservableScrollView((ViewGroup) view);
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

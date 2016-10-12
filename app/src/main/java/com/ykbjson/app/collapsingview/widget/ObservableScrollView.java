@@ -31,6 +31,7 @@ import java.util.ArrayList;
  */
 public class ObservableScrollView extends ScrollView {
     private ArrayList<Callbacks> mCallbacks = new ArrayList<>();
+    private boolean interceptTouchAnyWay;
 
     public ObservableScrollView(Context context) {
         this(context, null);
@@ -45,7 +46,11 @@ public class ObservableScrollView extends ScrollView {
         super(context, attrs, defStyleAttr);
         setOverScrollMode(OVER_SCROLL_NEVER);
     }
-
+    
+    public void setInterceptTouchAnyWay(boolean interceptTouchAnyWay) {
+        this.interceptTouchAnyWay = interceptTouchAnyWay;
+    }
+    
     /**
      * 重写此方法让scrollview一直拦截touch事件，解决当scrollview内容没超出屏幕时也能拦截touch事件
      * 因为源码 onInterceptTouchEvent 里有如下说明
@@ -56,7 +61,7 @@ public class ObservableScrollView extends ScrollView {
      */
     @Override
     public boolean canScrollVertically(int direction) {
-        return true;
+        return interceptTouchAnyWay||super.canScrollVertically(direction);
     }
 
     @Override

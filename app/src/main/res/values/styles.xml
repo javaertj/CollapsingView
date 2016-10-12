@@ -12,6 +12,7 @@
         <attr name="statusBarColor" format="reference" />
         <attr name="statusBarAlpha" format="float" />
         <attr name="needTranslucentStatus" format="boolean" />
+        <attr name="needPullRefresh" format="boolean" />
     </declare-styleable>
 
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
