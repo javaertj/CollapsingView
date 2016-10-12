@@ -342,10 +342,10 @@ public class CollapsingLayout extends FrameLayout implements AbsListView.OnScrol
                     case MotionEvent.ACTION_UP:
                         if (mScaling) {
                             //手指离开后恢复图片
-                            CollapsingLayout.this.restScaleView();
+                            restScaleView();
                         }
                         //防止上次沒缩放时记录了位置，导致下次点击时距离计算错误
-                        CollapsingLayout.this.resetScaleFlag();
+                        resetScaleFlag();
                         break;
                     case MotionEvent.ACTION_MOVE:
                         final int scrollY = getScrollY(scrollView);
@@ -358,20 +358,20 @@ public class CollapsingLayout extends FrameLayout implements AbsListView.OnScrol
                         // 当前位置比记录位置要小，正常返回
                         if (event.getY() - lastMoveY < 0) {
                             //防止快速回退时没能减掉最后一部分位移距离
-                            CollapsingLayout.this.resetScaleFlag();
-                            CollapsingLayout.this.checkScaleViewAttr();
+                            resetScaleFlag();
+                            checkScaleViewAttr();
                             break;
                         }
                         int distance = (int) ((event.getY() - lastMoveY) * 0.6); // 滚动距离乘以一个系数
                         //滚动距离负数，不缩放
                         if (distance < 0) {
-                            CollapsingLayout.this.resetScaleFlag();
+                            resetScaleFlag();
                             break;
                         }
                         //这里是防止还没滚动到顶部时touch事件被拦截，导致缩放距离计算不准确的问题
                         if (scrollY == 0) {
                             // 处理放大
-                            CollapsingLayout.this.handleScale(distance);
+                            handleScale(distance);
                             return true;
                         }
                 }
