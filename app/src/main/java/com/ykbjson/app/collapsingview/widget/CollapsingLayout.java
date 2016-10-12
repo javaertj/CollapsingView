@@ -307,15 +307,14 @@ public class CollapsingLayout extends FrameLayout implements AbsListView.OnScrol
      * @param viewGroup
      */
     public ObservableScrollView findObservableScrollView(ViewGroup viewGroup) {
+        if (viewGroup instanceof ObservableScrollView) {
+            return (ObservableScrollView) viewGroup;
+        }
         int count = viewGroup.getChildCount();
         for (int i = 0; i < count; i++) {
             View view = viewGroup.getChildAt(i);
             if (view instanceof ViewGroup) {
-                if (view instanceof ObservableScrollView) {
-                    return (ObservableScrollView) view;
-                } else {
-                    findObservableScrollView((ViewGroup) view);
-                }
+                return findObservableScrollView((ViewGroup) view);
             }
         }
 
