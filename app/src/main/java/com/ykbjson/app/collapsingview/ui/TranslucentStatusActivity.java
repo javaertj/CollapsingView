@@ -68,23 +68,20 @@ public class TranslucentStatusActivity extends CollapsingActivity {
     }
 
     @Override
-    public void onCollapsing(float t, float coefficient) {
+    public void onCollapsing(float t, float coefficient,float flutterCoefficient) {
         //状态栏替代品
         ViewHelper.setAlpha(collapsingLayout.getFillingStatusView(), coefficient);
         ViewHelper.setAlpha(ivHeaderVerticalLine, coefficient);
         ViewHelper.setAlpha(ivHeaderBg, coefficient);
-        float tempCoefficient;
         int color;
         if (coefficient >= 0.5) {
-            tempCoefficient = coefficient;
             color = getResources().getColor(R.color.sip_gray_dark);
             ivTitleRight1.setImageResource(R.drawable.bus_gray_search);
         } else {
-            tempCoefficient = 1 - coefficient;
             color = getResources().getColor(R.color.white);
             ivTitleRight1.setImageResource(R.drawable.bus_route_search);
         }
         tvTitleLeft.setTextColor(color);
-        ivTitleRight1.setAlpha(tempCoefficient);
+        ivTitleRight1.setAlpha(flutterCoefficient);
     }
 }

@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         SLog.init(true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        for (int i=0;i<5;i++){
+        for (int i=0;i<50;i++){
             listData.add(String.format(Locale.CHINESE,"这是第%d个item",(i+1)));
         }
     }

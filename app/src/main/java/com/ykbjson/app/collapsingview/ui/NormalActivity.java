@@ -71,7 +71,7 @@ public class NormalActivity extends CollapsingActivity {
     }
 
     @Override
-    public void onCollapsing(float t, float coefficient) {
+    public void onCollapsing(float t, float coefficient, float flutterCoefficient) {
 
     }
 }

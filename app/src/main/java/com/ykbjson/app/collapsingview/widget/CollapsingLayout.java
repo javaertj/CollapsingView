@@ -39,10 +39,11 @@ public class CollapsingLayout extends FrameLayout implements AbsListView.OnScrol
         /**
          * 收缩系数变化
          *
-         * @param t           竖直方向的滚动距离
-         * @param coefficient 计算出的收缩系数[0,1]
+         * @param t                  竖直方向的滚动距离
+         * @param coefficient        计算出的收缩系数[0,1]
+         * @param flutterCoefficient 计算出的收缩系数[0,1]~[0,1]
          */
-        void onCollapsing(float t, float coefficient);
+        void onCollapsing(float t, float coefficient, float flutterCoefficient);
     }
 
     private final String TAG_SCROLL = getResources().getString(R.string.tag_collapsingScroll);
@@ -461,7 +462,13 @@ public class CollapsingLayout extends FrameLayout implements AbsListView.OnScrol
      */
     private void handleScroll(float scrollY, float coefficient) {
         if (null != collapsingCallback) {
-            collapsingCallback.onCollapsing(scrollY, coefficient);
+            float flutterCoefficient;
+            if (coefficient >= 0.5) {
+                flutterCoefficient = coefficient - (1 - coefficient);
+            } else {
+                flutterCoefficient = (1 - coefficient) - (1 - (1 - coefficient));
+            }
+            collapsingCallback.onCollapsing(scrollY, coefficient, flutterCoefficient);
         }
         //悬浮视图
         if (null != floatView) {
